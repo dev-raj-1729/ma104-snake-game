@@ -8,7 +8,7 @@ public class Board extends JPanel implements ActionListener {
     private final int MAX_DOTS = 900;
     private final int SIZE_DOT = 10;
     private final int RAND_POS = 29;
-    private final int DELAY = 140;
+    private final int DELAY = 70;
 
     private final int x[] = new int[MAX_DOTS];
     private final int y[] = new int[MAX_DOTS];
@@ -45,8 +45,8 @@ public class Board extends JPanel implements ActionListener {
         ImageIcon iid = new ImageIcon("src/images/dot.png");
         ball = iid.getImage();
 
-        ImageIcon iia = new ImageIcon("src/images/apple.png");
-        apple = iia.getImage();
+        ImageIcon iia = new ImageIcon("src/images/apple-black.png");
+        apple = iia.getImage().getScaledInstance(10, 10, java.awt.Image.SCALE_SMOOTH);
 
         ImageIcon iih = new ImageIcon("src/images/head.png");
         head = iih.getImage();
@@ -87,6 +87,10 @@ public class Board extends JPanel implements ActionListener {
             }
             g.drawLine(0, BOARD_HEIGHT, BOARD_WIDTH,BOARD_HEIGHT);
             Toolkit.getDefaultToolkit().sync();
+            Font small = new Font("Helvetica",Font.BOLD,14);
+            g.setFont(small);
+            g.setColor(Color.white);
+            g.drawString("SCORE: "+(dots-3)*10, BOARD_WIDTH-100, BOARD_HEIGHT+40);
         } else {
             gameOver(g);
         }
@@ -130,7 +134,7 @@ public class Board extends JPanel implements ActionListener {
     private void checkCollision() {
         
         for (int z = dots;z>0;z--) {
-            if((z>4) &&(x[0]==x[z]) && (y[0] == y[z])) {
+            if((dots>4) &&(x[0]==x[z]) && (y[0] == y[z])) {
                 inGame = false;
             }
         }
