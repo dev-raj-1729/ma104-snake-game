@@ -36,7 +36,7 @@ public class Board extends JPanel implements ActionListener {
         setBackground(Color.black);
         setFocusable(true);
 
-        setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT));
+        setPreferredSize(new Dimension(BOARD_WIDTH,BOARD_HEIGHT+100));
         loadImages();
         initGame();
     }
@@ -85,6 +85,7 @@ public class Board extends JPanel implements ActionListener {
                     g.drawImage(ball, x[z], y[z], this);
                 }
             }
+            g.drawLine(0, BOARD_HEIGHT, BOARD_WIDTH,BOARD_HEIGHT);
             Toolkit.getDefaultToolkit().sync();
         } else {
             gameOver(g);
