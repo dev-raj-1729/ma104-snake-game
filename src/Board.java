@@ -8,12 +8,12 @@ public class Board extends JPanel implements ActionListener {
     private final int MAX_DOTS = 900;
     private final int SIZE_DOT = 10;
     private final int RAND_POS = 29;
-    private final int DELAY = 70;
     private final int X_OFFSET =10;
     private final int Y_OFFSET = 10;
     private final int x[] = new int[MAX_DOTS];
     private final int y[] = new int[MAX_DOTS];
     private final int SCALE = 2;
+    private  int delay = 70;
     private int dots;
     private int apple_x;
     private int apple_y;
@@ -24,7 +24,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean upDirection = false;
     private boolean downDirection = false;
     private boolean inGame = true;
-
+    private boolean askDifficulty = true;
     private Timer timer;
     private Image ball;
     private Image apple;
@@ -64,7 +64,7 @@ public class Board extends JPanel implements ActionListener {
 
         locateApple();
 
-        timer = new Timer(DELAY,this);
+        timer = new Timer(delay,this);
         timer.start();
 
     }
@@ -77,7 +77,10 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void doDrawing(Graphics g) {
-        if (inGame) {
+        if(askDifficulty) {
+            chooseDifficulty(g);
+        }
+        else if (inGame) {
             g.drawImage(apple,(apple_x+X_OFFSET)*SCALE,(apple_y+Y_OFFSET)*SCALE,this);
 
             for (int z=0;z<dots;z++) {
@@ -118,9 +121,22 @@ public class Board extends JPanel implements ActionListener {
         // inGame = true;
         
         // setBackground(Color.white);
-        
+        timer.stop();
     }
-
+    private void chooseDifficulty(Graphics g) {
+        String msg = "Choose your Difficulty";
+        Font small = new Font("Helvetica",Font.BOLD,14*SCALE);
+        FontMetrics metr = getFontMetrics(small);
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(msg,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2)*SCALE);
+        String msg1 = "[E] Easy";
+        g.drawString(msg1,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2 + 20)*SCALE);
+        msg1 = "[M] Medium";
+        g.drawString(msg1,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2 + 40)*SCALE);
+        msg1 = "[H] Hard";
+        g.drawString(msg1,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2 + 60)*SCALE);
+    }
     private void checkApple() {
         if((x[0]==apple_x) && (y[0] == apple_y)) {
             dots++;
@@ -149,7 +165,7 @@ public class Board extends JPanel implements ActionListener {
     private void checkCollision() {
         
         for (int z = dots;z>0;z--) {
-            if((dots>4) &&(x[0]==x[z]) && (y[0] == y[z])) {
+            if((x[0]==x[z]) && (y[0] == y[z])) {
                 inGame = false;
             }
         }
@@ -177,7 +193,7 @@ public class Board extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e){
-        if(inGame) {
+        if(inGame && !askDifficulty) {
             checkApple();
             checkCollision();
             move();
@@ -193,11 +209,29 @@ public class Board extends JPanel implements ActionListener {
             if(!inGame && key == KeyEvent.VK_R){
                 initBoard();
                 inGame = true;
+                rightDirection = true;
+                leftDirection= false;
+                upDirection = false;
+                downDirection = false;
+                time_steps = 0;
+                askDifficulty = true;
             }
             else if(!inGame && key == KeyEvent.VK_ESCAPE) {
                 System.exit(0);
             }
-
+            if(askDifficulty && key == KeyEvent.VK_H) {
+                askDifficulty = false;
+                delay = 70;
+                timer.setDelay(delay);
+            } else if (askDifficulty && key == KeyEvent.VK_M) {
+                askDifficulty = false;
+                delay = 140;
+                timer.setDelay(delay);
+            } else if (askDifficulty && key == KeyEvent.VK_E) {
+                askDifficulty = false;
+                delay = 210;
+                timer.setDelay(delay);
+            }
             if((key == KeyEvent.VK_LEFT)&&(!rightDirection)) {
                 leftDirection = true;
                 upDirection = false;
