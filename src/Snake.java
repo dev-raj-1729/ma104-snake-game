@@ -14,13 +14,15 @@ public class Snake extends JFrame {
         setTitle("Snake");
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        System.out.println("here");
+
     }
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             JFrame ex = new Snake();
             ex.setVisible(true);
-            System.out.println("here");
+           
         });
     }
 }
