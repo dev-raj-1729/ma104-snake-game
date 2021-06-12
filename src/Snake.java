@@ -7,14 +7,13 @@ public class Snake extends JFrame {
     }
 
     private void initUI() {
-        add(new Board());
-        setResizable(false);
-        pack();
+        add(new Board());       //add Board JPanel to JFrame
+        setResizable(false);        
+        pack();                 //conforms JPanel to the size of JFrame
 
-        setTitle("Snake");
+        setTitle("Snake");      
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        System.out.println("here");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);    
 
     }
 

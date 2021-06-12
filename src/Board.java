@@ -3,21 +3,22 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class Board extends JPanel implements ActionListener {
-    private final int BOARD_WIDTH = 300;
-    private final int BOARD_HEIGHT = 300;
-    private final int MAX_DOTS = 900;
-    private final int SIZE_DOT = 10;
-    private final int RAND_POS = 29;
-    private final int X_OFFSET =10;
-    private final int Y_OFFSET = 10;
-    private final int x[] = new int[MAX_DOTS];
-    private final int y[] = new int[MAX_DOTS];
-    private final int SCALE = 2;
+    private static final int BOARD_WIDTH = 300;
+    private static final int BOARD_HEIGHT = 300;
+    private static final int MAX_DOTS = 900;
+    private static final int SIZE_DOT = 10;
+    private static final int RAND_POS = 29;
+    private static final int X_OFFSET =10;
+    private static final int Y_OFFSET = 10;
+    private final int [] dotsXcord = new int[MAX_DOTS];
+    private final int [] dotsYcord = new int[MAX_DOTS];
+    private static final int SCALE = 2;
+    private static final String FONTFAMILY = "Helvetica";
     private  int delay = 70;
     private int dots;
-    private int apple_x;
-    private int apple_y;
-    private int time_steps =0;
+    private int appleX;
+    private int appleY;
+    private int timeSteps =0;
 
     private boolean leftDirection = false;
     private boolean rightDirection = true;
@@ -26,9 +27,9 @@ public class Board extends JPanel implements ActionListener {
     private boolean inGame = true;
     private boolean askDifficulty = true;
     private Timer timer;
-    private Image ball;
-    private Image apple;
-    private Image head;
+    private transient Image ball;
+    private transient Image apple;
+    private transient Image head;
 
     public Board() {
         initBoard();
@@ -58,8 +59,8 @@ public class Board extends JPanel implements ActionListener {
         dots = 3;
 
         for (int z=0;z<dots;z++){
-            x[z] = 50-z*10;
-            y[z] = 50;
+            dotsXcord[z] = 50-z*10;
+            dotsYcord[z] = 50;
         }
 
         locateApple();
@@ -81,23 +82,20 @@ public class Board extends JPanel implements ActionListener {
             chooseDifficulty(g);
         }
         else if (inGame) {
-            g.drawImage(apple,(apple_x+X_OFFSET)*SCALE,(apple_y+Y_OFFSET)*SCALE,this);
+            g.drawImage(apple,(appleX+X_OFFSET)*SCALE,(appleY+Y_OFFSET)*SCALE,this);
 
             for (int z=0;z<dots;z++) {
                 if(z==0){
-                    g.drawImage(head,(x[z]+X_OFFSET)*SCALE,(y[z]+Y_OFFSET)*SCALE,this);
+                    g.drawImage(head,(dotsXcord[z]+X_OFFSET)*SCALE,(dotsYcord[z]+Y_OFFSET)*SCALE,this);
                 } else {
-                    g.drawImage(ball, (x[z]+X_OFFSET)*SCALE, (y[z]+Y_OFFSET)*SCALE, this);
+                    g.drawImage(ball, (dotsXcord[z]+X_OFFSET)*SCALE, (dotsYcord[z]+Y_OFFSET)*SCALE, this);
                 }
             }
-            Font small = new Font("Helvetica",Font.BOLD,14*SCALE);
+            Font small = new Font(FONTFAMILY,Font.BOLD,14*SCALE);
             g.setFont(small);
             g.setColor(Color.white);
-            // g.drawLine(5, 5, BOARD_WIDTH, 5);
-            // g.drawLine(x1, y1, x2, y2);
-            // g.drawLine(5, BOARD_HEIGHT + Y_OFFSET+5, BOARD_WIDTH+5,BOARD_HEIGHT+Y_OFFSET+5);
             g.drawRect(5, 5, (BOARD_WIDTH+X_OFFSET)*SCALE, (BOARD_HEIGHT + Y_OFFSET)*SCALE);
-            g.drawString("TIME: "+time_steps/10, (50)*SCALE, (BOARD_HEIGHT+40)*SCALE);
+            g.drawString("TIME: "+timeSteps/10, (50)*SCALE, (BOARD_HEIGHT+40)*SCALE);
             g.drawString("SCORE: "+(dots-3)*10, (BOARD_WIDTH-100)*SCALE, (BOARD_HEIGHT+40)*SCALE);
             Toolkit.getDefaultToolkit().sync();
         } else {
@@ -108,24 +106,20 @@ public class Board extends JPanel implements ActionListener {
     }
     private void gameOver(Graphics g) {
         String msg = "Game Over";
-        Font small = new Font("Helvetica",Font.BOLD,14*SCALE);
+        Font small = new Font(FONTFAMILY,Font.BOLD,14*SCALE);
         FontMetrics metr = getFontMetrics(small);
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(msg,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2)*SCALE);
-        Font sub = new Font("Helvetica",Font.BOLD,12*SCALE);
+        Font sub = new Font(FONTFAMILY,Font.BOLD,12*SCALE);
         String msg2 = "Press R to restart or Esc to exit";
         g.setFont(sub);
         g.drawString(msg2,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg2))/2,((40+BOARD_HEIGHT+Y_OFFSET)/2)*SCALE);
-        // initBoard();
-        // inGame = true;
-        
-        // setBackground(Color.white);
         timer.stop();
     }
     private void chooseDifficulty(Graphics g) {
         String msg = "Choose your Difficulty";
-        Font small = new Font("Helvetica",Font.BOLD,14*SCALE);
+        Font small = new Font(FONTFAMILY,Font.BOLD,14*SCALE);
         FontMetrics metr = getFontMetrics(small);
         g.setColor(Color.white);
         g.setFont(small);
@@ -138,44 +132,44 @@ public class Board extends JPanel implements ActionListener {
         g.drawString(msg1,((2*X_OFFSET+BOARD_WIDTH)*SCALE-metr.stringWidth(msg))/2,((BOARD_HEIGHT+Y_OFFSET)/2 + 60)*SCALE);
     }
     private void checkApple() {
-        if((x[0]==apple_x) && (y[0] == apple_y)) {
+        if((dotsXcord[0]==appleX) && (dotsYcord[0] == appleY)) {
             dots++;
             locateApple();
         }
     }
 
     private void move() {
-        time_steps++;
+        timeSteps++;
         for (int z= dots;z>0;z--) {
-            x[z] = x[(z-1)];
-            y[z] = y[(z-1)];
+            dotsXcord[z] = dotsXcord[(z-1)];
+            dotsYcord[z] = dotsYcord[(z-1)];
         }
 
         if (leftDirection) {
-            x[0] -= SIZE_DOT;
+            dotsXcord[0] -= SIZE_DOT;
         } else if(rightDirection) {
-            x[0] += SIZE_DOT;
+            dotsXcord[0] += SIZE_DOT;
         } else if(upDirection) {
-            y[0] -= SIZE_DOT;
+            dotsYcord[0] -= SIZE_DOT;
         } else if(downDirection){
-            y[0] += SIZE_DOT;
+            dotsYcord[0] += SIZE_DOT;
         }
     }
 
     private void checkCollision() {
         
         for (int z = dots;z>0;z--) {
-            if((x[0]==x[z]) && (y[0] == y[z])) {
+            if((dotsXcord[0]==dotsXcord[z]) && (dotsYcord[0] == dotsYcord[z])) {
                 inGame = false;
             }
         }
-        if (y[0] >= BOARD_HEIGHT) {
+        if (dotsYcord[0] >= BOARD_HEIGHT) {
             inGame = false;
-        } else if(y[0]<0) {
+        } else if(dotsYcord[0]<0) {
             inGame = false;
-        } else if (x[0]>=BOARD_WIDTH) {
+        } else if (dotsXcord[0]>=BOARD_WIDTH) {
             inGame = false;
-        } else if(x[0] < 0) {
+        } else if(dotsXcord[0] < 0) {
             inGame = false;
         }
         if(!inGame) {
@@ -185,10 +179,10 @@ public class Board extends JPanel implements ActionListener {
 
     private void locateApple() {
         int r = (int) (Math.random()* RAND_POS);
-        apple_x = ((r*SIZE_DOT));
+        appleX = (r*SIZE_DOT);
 
         r= (int) (Math.random()*RAND_POS);
-        apple_y = ((r*SIZE_DOT));
+        appleY = (r*SIZE_DOT);
     }
 
     @Override
@@ -213,7 +207,7 @@ public class Board extends JPanel implements ActionListener {
                 leftDirection= false;
                 upDirection = false;
                 downDirection = false;
-                time_steps = 0;
+                timeSteps = 0;
                 askDifficulty = true;
             }
             else if(!inGame && key == KeyEvent.VK_ESCAPE) {
